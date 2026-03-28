@@ -1,50 +1,31 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 
 const app = express();
-
+app.use(express.static("public"));
 app.use(cors());
 app.use(express.json());
 
-// 讓網站可以讀前端檔案
-app.use(express.static("public"));
+// 測試用首頁
+app.get("/", (req, res) => {
+    res.send("後端正常運行 ✔");
+});
 
-// 假資料
-const userData = {
-    test: {
-        password: "1234",
-        history: [
-            { date: "2025-01-01", item: "1000 VP", price: 300 },
-            { date: "2025-02-10", item: "2050 VP", price: 600 },
-            { date: "2025-03-05", item: "Battle Pass", price: 450 }
-        ]
-    }
-};
-
-// API
+// 接收登入資料
 app.post("/login", (req, res) => {
+    console.log("🔥 收到前端請求");
+
     const { username, password } = req.body;
 
-    console.log("登入：", username);
-
-    const user = userData[username];
-
-    if (!user || user.password !== password) {
-        return res.json({
-            success: false,
-            message: "帳號或密碼錯誤"
-        });
-    }
+    console.log("帳號：", username);
+    console.log("密碼：", password);
 
     res.json({
         success: true,
-        history: user.history
+        message: "後端已收到資料"
     });
 });
 
-// Render 需要
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log("Server running on port " + PORT);
+app.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
 });
