@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>VALORANT</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f1923;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    margin-top: 80px;
+}
+
+input {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    width: 220px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #ff4655;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+table {
+    margin: 30px auto;
+    width: 80%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #333;
+    padding: 10px;
+}
+
+th {
+    background: #1f2a36;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>VALORANT 消費紀錄</h2>
+
+    <input id="username" placeholder="帳號">
+    <input id="password" type="password" placeholder="密碼">
+
+    <button onclick="login()">登入</button>
+
+    <div id="msg"></div>
+
+    <table id="table" style="display:none;">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>商品</th>
+                <th>金額</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</div>
+
+<script>
+async function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const res = await fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    const msg = document.getElementById("msg");
+    const table = document.getElementById("table");
+    const tbody = document.getElementById("tbody");
+
+    if (!data.success) {
+        msg.innerText = data.message;
+        table.style.display = "none";
+        return;
+    }
+
+    msg.innerText = "登入成功 ✔";
+    table.style.display = "table";
+
+    tbody.innerHTML = "";
+
+    data.history.forEach(item => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.date}</td>
+                <td>${item.item}</td>
+                <td>${item.price}</td>
+            </tr>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
